@@ -123,7 +123,7 @@ static uint8_t *read_file(const char *path, size_t *size)
 
 void show_info(int esc)
 {
-    printf("Usage: %s [/path/to/gsc-firmware.bin] <optional args>\n"
+    printf("Usage: %s -i [/path/to/gsc-firmware.bin] <optional args>\n"
         "\n"
         "Arguments:\n"
         "-h, --help: Show this help and exit.\n"
