@@ -72,6 +72,7 @@ void launch_console(char *path)
 	int input = serialport_init("/dev/stdin", B115200);
     int con = serialport_init(path, B115200);
     char c = ' ';
+	static int last_was_nl = 0;
 
     while (true) {
 		if (serialport_read(input, &c) != -1) {
@@ -85,8 +86,18 @@ void launch_console(char *path)
         if (serialport_read(con, &c) == -1) 
             continue;
 
-		if (c == '\r') c = '\n';
+		// probably a better way to do this...
+		if (c == '\r') continue;
 
-        printf("%c", c);
-    }
+		if (c == '\n') {
+			if (last_was_nl)
+				continue;
+			printf("\r\n");
+			last_was_nl = 1;
+		} else {
+			printf("%c", c);
+			last_was_nl = 0;
+		}
+		
+	}
 }
