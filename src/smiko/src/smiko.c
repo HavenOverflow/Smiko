@@ -135,7 +135,7 @@ int main(int argc, char **argv)
 	/* Everything below this point needs root access to operate. */
 	if (getuid() != 0) {
 		fprintf(stderr, "Error: Please run %s as root.\n", argv[0]);
-		show_info(1);
+		exit(1);
 	}
 
 	if (fbool("console")) {
