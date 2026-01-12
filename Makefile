@@ -136,7 +136,7 @@ $(BDIR)/bin/$(ARCH)/nosclient:
 	$(Q)$(MAKE) -C src/nosclient --no-print-directory
 	$(Q)$(CP) src/nosclient/build/$(ARCH)/nosclient $@
 
-codesigner: $(BDIR)/bin/$(ARCH)/cr50-codesigner
+codesigner: $(BDIR) $(BDIR)/bin/$(ARCH)/cr50-codesigner
 $(BDIR)/bin/$(ARCH)/cr50-codesigner:
 	$(Q)$(MAKE) -C test/signer --no-print-directory
 	$(Q)$(CP) test/signer/build/$(ARCH)/cr50-codesigner $@
