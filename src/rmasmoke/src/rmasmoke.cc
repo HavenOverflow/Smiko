@@ -349,9 +349,9 @@ int main(int argc, char **argv)
 
 	if (fbool("--dump_mem","-D")) {
 		uint32_t addr, len;
-		addr = atoi(fval("--dump_mem","-D", 1).c_str());
-		len = atoi(fval("--dump_mem","-D", 2).c_str());
-
+		addr = strtoul(fval("--dump_mem","-D", 1).c_str(), nullptr, 0);
+		len = strtoul(fval("--dump_mem","-D", 2).c_str(), nullptr, 0);
+		
 		std::cout << "Dumping provided memory ranges to console." << std::endl;
 		dump_memory_range(addr, len);
 	}

