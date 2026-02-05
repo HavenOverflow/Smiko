@@ -1,1 +1,5 @@
-int dump_memory_range(uint32_t addr, uint32_t len);
+enum rop_chain_type : uint32_t {
+    DATALEAK_CHAIN,
+};
+
+int execute_rop_chain(enum rop_chain_type rop_type);

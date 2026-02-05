@@ -18,6 +18,7 @@
 #include <tss2/tss2_tpm2_types.h>
 #include <unistd.h>
 
+#include "args.h"
 #include "crypto.h"
 #include "nvmem.hh"
 #include "rmasmoke.hh"
@@ -42,8 +43,6 @@ TSS2_SYS_CONTEXT *GenerateContext(size_t *size)
 
 struct tpm_result *GetCommandBufferFromSys(TSS2_SYS_CONTEXT *ctx) 
 {
-	uintptr_t ptr = (uintptr_t)(ctx);
-	ptr += sizeof(uintptr_t); // There is one pointer towards the actual buffer ptr;
 	return (tpm_result *)(((TSS2_SYS_CONTEXT_INT *)ctx)->cmdBuffer);
 }
 
@@ -149,6 +148,15 @@ void *nvmem_write(uint32_t index, uint32_t offset,
 	TSS2L_SYS_AUTH_COMMAND cmd = generate_auth_token();
 	struct tpm_result *packet = GetCommandBufferFromSys(sysctx);
 	struct tpm_result *resultPtr = nullptr;
+
+	if (fbool("verbose") && !(len & 3)) {
+		std::cout << "Debug: " << __func__ << ": Writing ";
+
+		uint32_t *ptr = (uint32_t *)(data);
+		for (int i = 0; i < (len / sizeof(uint32_t)); ++i)
+			printf("0x%x ", ptr[i]);
+		std::cout << std::endl;
+	}
 
     // Copy our data into the NV buffer
 	TPM2B_MAX_NV_BUFFER nvbuf;

