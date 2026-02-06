@@ -23,6 +23,8 @@ LIBS += ../../lib/$(ARCH)/libcrypto.a
 LIBS += ../../lib/$(ARCH)/libssl.a
 LIBS += ../../lib/$(ARCH)/libelf.a
 LIBS += ../../lib/$(ARCH)/libusb-1.0.a
+LIBS += ../../lib/$(ARCH)/libz.a
+LIBS += ../../lib/$(ARCH)/liblzma.a
 CFLAGS += -static
 endif
 
