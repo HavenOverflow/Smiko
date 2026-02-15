@@ -26,10 +26,8 @@ PYTHON ?= python3
 CC := $(CROSS_COMPILE)gcc
 CXX := $(CROSS_COMPILE)g++
 LD := $(CROSS_COMPILE)gcc
-RUSTC := rustc
 PROTOC ?= protoc
 PKG_CONFIG ?= pkg-config
-CARGO ?= cargo
 INSTALL ?= install
 
 ### Chromium extension build utilities ###
