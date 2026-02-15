@@ -3,7 +3,7 @@ In order to build the software inside this repository, first make sure you have 
 
 For Debian Linux and derivatives:
 ```bash
-sudo apt-get install git make gcc g++ protobuf-compiler libtss2-dev libusb-1.0-0-dev libftdi-dev libelf-dev libxml2-dev rapidjson-dev pkg-config gcc-arm-none-eabi gcc-aarch64-linux-gnu python3
+sudo apt-get install git make gcc g++ protobuf-compiler libtss2-dev libusb-1.0-0-dev libftdi-dev libelf-dev libxml2-dev rapidjson-dev pkg-config gcc-arm-none-eabi gcc-aarch64-linux-gnu libftdi1-dev python3
 pip install -r pip-requirements.txt --break-system-packages
 ```
 
