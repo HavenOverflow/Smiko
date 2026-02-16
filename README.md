@@ -65,7 +65,7 @@ Core Contributors
 
 ***!-!-!-! People below this are not HavenOverflow members and may not be affiliated with us !-!-!-!***
 
-- [Kxtz](https://github.com/kxtzownsu): Fixing various bugs and misc development, testing
+- [Kxtz](https://github.com/kxtzownsu): misc development, testing, fixing static compilation for aarch64 & x86_64
 - [Quarkslab](https://quarkslab.com): Proving the concept possible and introducing us to Citadel and NuggetOS
 - [Google](https://github.com/Google): Developing the GSC and all provided firmware
 
