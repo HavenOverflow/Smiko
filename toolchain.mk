@@ -25,7 +25,7 @@ CROSS_COMPILE := arm-none-eabi-
 HEADER_DIR := $(abspath lib/armv7l/headers)
 endif# ifeq ARCH,armv7l
 
-else # ifneq ARCH,uname -m
+endif # ifneq ARCH,uname -m
 endif # ifeq CROSS_COMPILE,
 
 ### Standard build utilities ###
