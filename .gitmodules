@@ -13,7 +13,7 @@
 [submodule "src/tpm2"]
 	path = src/tpm2
 	url = https://github.com/HavenOverflow/tpm2.git
-[submodule "src/rmasmoke/third_party/nanopb"]
-	path = src/rmasmoke/third_party/nanopb
+[submodule "third_party/nanopb"]
+	path = third_party/nanopb
 	url = https://github.com/nanopb/nanopb.git
 	shallow = true

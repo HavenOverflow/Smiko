@@ -14,11 +14,4 @@
     \
     temp_a < temp_b ? temp_a : temp_b; \
 })
-
-unsigned int calculate_block_digest(const void *data, size_t data_size, 
-                                    uint32_t offset, bool use_sha256);
-
-// Quick and dirty libcrypto wrapper designed to emulate DCRYPTO_SHA256_hash
-uint8_t *CRYPTO_SHA256_hash(const void *data, uint32_t n,
-	uint8_t *digest);
 #endif /* __SMIKO_CRYPTO_H */
