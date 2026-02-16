@@ -52,18 +52,23 @@ HavenOverflow is **not responsible for any misuse of this software or anything t
 More information on the [Code Of Conduct](CODE_OF_CONDUCT.md) and [Security](SECURITY.md) for this repository can be found in their respective documents. For any potential legal concerns, please email legal@havenoverflow.dev.
 
 ## Credits and Special Thanks
-- Hannah: Pioneering development, building the payloads and injectors
-- Appleflyer: Completing the H1 BootROM dump, major help with development and research, lead GSCEmulator dev
-- Evelyn: Major help decompiling and developing, soldering to test Shaft
-- Kayla: Helping compile & decompile things, AP and EC hardware insight
-- WeirdTreeThing: Soldering to test shaft, hardware insight, helping compile things
-- OlyB: Insight into the ChromeOS and GSC ecosystems
-- Leah: Helping compile things and testing
-- Kxtz (no longer affiliated): Fixing various bugs and misc development, testing
-- Writable (unaffiliated): Discovering the exploit that let us dump the H1 BootROM
-- Quarkslab (unaffiliated): Proving the concept possible and introducing us to Citadel and NuggetOS
-- Google (unaffiliated): Developing the GSC and all provided firmware
 
-[Join HavenOverflow](https://discord.gg/BtJ6j2eJrU)
+Core Contributors
+- [Hannah](https://github.com/ZegLolTheThirtySixth): Pioneering development, building the payloads and injectors
+- [Appleflyer](https://github.com/appleflyerv3): Completing the H1 BootROM dump, major help with development and research, lead GSCEmulator dev
+- [Evelyn](https://github.com/Evenlyn3440): Major help decompiling and developing, soldering to test Shaft
+- [Kayla](https://github.com/TheSpiritOfTheDark): Helping compile & decompile things, AP and EC hardware insight
+- [WeirdTreeThing](https://github.com/WeirdTreeThing): Soldering to test shaft, hardware insight, helping compile things
+- [OlyB](https://github.com/BinBashBanana): Insight into the ChromeOS and GSC ecosystems
+- [Leah](https://github.com/OtterCodes101): Helping compile things and testing
+- [Writable](https://github.com/MunyDev): Creating RMASmoke which allowed us to dump the H1's BootROM
 
-[Join Crosbreaker](https://discord.crosbreaker.dev)
+***!-!-!-! People below this are not HavenOverflow members and may not be affiliated with us !-!-!-!***
+
+- [Kxtz](https://github.com/kxtzownsu): Fixing various bugs and misc development, testing
+- [Quarkslab](https://quarkslab.com): Proving the concept possible and introducing us to Citadel and NuggetOS
+- [Google](https://github.com/Google): Developing the GSC and all provided firmware
+
+## Discord
+- [Join HavenOverflow](https://discord.gg/BtJ6j2eJrU)
+- [Join Crosbreaker](https://discord.crosbreaker.dev)
