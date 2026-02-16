@@ -28,6 +28,13 @@ endif# ifeq ARCH,armv7l
 endif # ifneq ARCH,uname -m
 endif # ifeq CROSS_COMPILE,
 
+# we also want HEADER_DIR if we're statically compiling
+ifneq ($(STATIC),)
+ifndef HEADER_DIR
+HEADER_DIR := $(abspath lib/$(ARCH)/headers)
+endif
+endif
+
 ### Standard build utilities ###
 MAKE ?= make
 SHELL := /bin/bash

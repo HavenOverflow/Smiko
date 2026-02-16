@@ -104,7 +104,7 @@ CXXFLAGS += -static
 LDFLAGS += -static
 endif
 
-ifneq ($(CROSS_COMPILE),)
+ifdef HEADER_DIR
 CFLAGS += -I$(HEADER_DIR)
 CXXFLAGS += -I$(HEADER_DIR)
 LDFLAGS += -L$(HEADER_DIR)
