@@ -3,6 +3,9 @@
 ## x86_64:
 <!-- todo: fill in the x86_64 sources -->
 
+- [headers/openssl](https://github.com/djp952/prebuilt-libssl/tree/master/linux-x86_64)
+- [headers/libxml](https://dl-cdn.alpinelinux.org/v3.18/main/x86_64/libxml2-dev-2.11.8-r3.apk)
+- [headers/libftdi1](https://dl-cdn.alpinelinux.org/v3.18/community/x86_64/libftdi1-dev-1.5-r1.apk)
 
 ## aarch64:
 - [libcrypto.a](https://github.com/djp952/prebuilt-libssl/tree/master/linux-aarch64)
@@ -18,3 +21,4 @@
 
 - [headers/openssl](https://github.com/djp952/prebuilt-libssl/tree/master/linux-aarch64)
 - [headers/libxml](https://dl-cdn.alpinelinux.org/v3.18/main/aarch64/libxml2-dev-2.11.8-r3.apk)
+- [headers/libftdi1](https://dl-cdn.alpinelinux.org/v3.18/community/aarch64/libftdi1-dev-1.5-r1.apk)
