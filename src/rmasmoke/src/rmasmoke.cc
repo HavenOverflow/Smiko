@@ -27,7 +27,7 @@
 #include <tss2/tss2_tpm2_types.h>
 #include <unistd.h>
 
-#include "args.hh"
+#include "args.h"
 #include "chip_config.h"
 #include "nvmem.hh"
 #include "pb_encode.h"
@@ -80,7 +80,8 @@ void *read_file(const char *path, size_t *size_ptr)
     FILE *fp;
 	struct stat st;
 
-	if (fbool("--verbose","-v")) std::cout << "Debug: Copying contents of file " << path << " to memory." << std::endl; 
+	if (fbool("verbose")) 
+		std::cout << "Debug: Copying contents of file " << path << " to memory." << std::endl; 
 	
     fp = fopen(path, "rb");
     if (!fp) {
@@ -132,7 +133,7 @@ uint32_t SendTPMCommand(tpm_result *buf, size_t len, tpm_result **respBuf,
 	memset(responseBuffer, 0, 2048);
 	int read_count = 0;
 	
-	if (fbool("--socket","-s")) {
+	if (fbool("socket")) {
 		read_count = read(tpmfd, response, 2048);
 	}else{
 		do {
@@ -159,7 +160,8 @@ uint32_t SendTPMCommand(tpm_result *buf, size_t len, tpm_result **respBuf,
 	}
 	if (respLen) *respLen = responseLen;
 	
-	if (fbool("--verbose","-v")) printf("Info: Received response: %0#x with length %lu\n", rv, responseLen);
+	if (fbool("verbose")) 
+		printf("Info: Received response: %0#x with length %lu\n", rv, responseLen);
 	return rv;
 }
 
@@ -167,7 +169,7 @@ TSS2L_SYS_AUTH_COMMAND generate_auth_token(void)
 {
     tpm_manager_LocalData ld = tpm_manager_LocalData_init_default;
     std::string protobufData;
-    std::string local_data_path = (fbool("--local_data_path","-l")) ? fval("--local_data_path", "-l", 1) : "/var/lib/tpm_manager/local_tpm_data";
+    std::string local_data_path = (fbool("local_data_path")) ? fval("local_data_path", 1) : "/var/lib/tpm_manager/local_tpm_data";
 
     if (ReadFileToString(local_data_path, &protobufData) != 0) {
 		std::cerr << "Error: Failed to open local_tpm_data, try running the commands" << std::endl;
@@ -235,7 +237,7 @@ int tpm_take_ownership(void)
 {
     tpm_manager_LocalData ld = tpm_manager_LocalData_init_default;
     std::string protobufData;
-    std::string local_data_path = (fbool("--local_data_path","-l")) ? fval("--local_data_path","-l", 1) : "/var/lib/tpm_manager/local_tpm_data";
+    std::string local_data_path = (fbool("local_data_path")) ? fval("local_data_path", 1) : "/var/lib/tpm_manager/local_tpm_data";
 
     if (ReadFileToString(local_data_path, &protobufData) != 0) {
 		std::cerr << "Error: Failed to read local data at " << local_data_path << std::endl;
@@ -283,63 +285,34 @@ int tpm_take_ownership(void)
     return 0;
 }
 
-void show_info(int esc)
-{
-	printf("Usage: %s [args]\n"
-		"RMASmoke is a tool (written by Writable and greatly improved by Hannah) designed to exploit\n"
-		"a stack buffer overflow present in TPM2, which is utilized by the Cr50 firmware present on\n"
-		"nearly every Chromebook manufactured since 2019, with the goal of using return-oriented-programming\n"
-		"to gain out-of-bounds read/write in the H1 chip, and use this control to read on-board secrets\n"
-		"(e.g. the BootROM) or modify important values (e.g. Firmware headers, RMA auth, and hardware registers)\n"
-		"\n"
-		"Arguments:\n"
-		"-h, --help: Show this help and exit\n"
-		"-V, --version [0.5.*]: Specify the Cr50 version to test under\n"
-		"-s, --socket [/dev/tpm#]: Specify a TPM2 socket instead of /dev/tpm0\n" /* For testing */
-		"-u, --startup: Start TPM2 if it hasn't already been started\n" /* For tpm2-simulator */
-		"-o, --take_ownership: Take ownership of the TPM and generate local_tpm_data\n"
-		"-p, --setup: Setup the necessary index for RMASmoke to operate\n"
-		"-l, --local_data_path [path]: Specify the path to the local_tpm_data to be used in authorization\n"
-		"-D, --dump_mem <addr> <length>: Dump any memory on the H1 to the CCD console\n"
-		"-C, --cleanup: Cleanup indexes created by RMASmoke\n"
-		"-v, --verbose: Show extra debug output\n"
-		"\n", gargv[0]);
-	exit(esc);
-}
-
 int main(int argc, char **argv)
 {
-	// Save me some time and make command line arguments global
-	gargc = argc;
-	gargv = argv;
+	parse_args(argc, argv);
 
 	if (argc < 2) {
 		std::cerr << "Error: Expected more arguments." << std::endl;
 		show_info(1);
 	}
-	if (fbool("--help","-h")) show_info(0);
+	if (fbool("help")) show_info(0);
 
 	if (getuid() != 0) {
 		std::cerr << "Error: RMASmoke must be run as root." << std::endl;
 		return 1;
 	}
 
-	std::string socket = (fbool("--socket","-s")) ? fval("--socket","-s", 1) : "/dev/tpm0";
-
-	tpm = open(socket.c_str(), O_RDWR);
+	const char *socket = (fbool("socket")) ? fval("socket", 1) : "/dev/tpm0";
+	tpm = open(socket, O_RDWR);
 	if (tpm < 0) {
 		std::cerr << "Error: Failed to connect to TPM, cannot continue." << std::endl;
 		return 1;
 	}
 
-
-
-	if (fbool("--startup","-u")) {
+	if (fbool("startup")) {
 		std::cout << "Info: Sending startup command to TPM." << std::endl;
 		tpm_startup();
 	}
 
-	if (fbool("--take_ownership","-o")) {
+	if (fbool("take_ownership")) {
 		std::cout << "Info: Taking TPM ownership." << std::endl;
 		if (tpm_take_ownership() != 0) {
 			std::cerr << "Erorr: Failed to take TPM ownership." << std::endl;
@@ -347,16 +320,11 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (fbool("--dump_mem","-D")) {
-		uint32_t addr, len;
-		addr = strtoul(fval("--dump_mem","-D", 1).c_str(), nullptr, 0);
-		len = strtoul(fval("--dump_mem","-D", 2).c_str(), nullptr, 0);
-		
-		std::cout << "Dumping provided memory ranges to console." << std::endl;
-		dump_memory_range(addr, len);
+	if (fbool("dump_addr")) {
+		execute_rop_chain(rop_chain_type::DATALEAK_CHAIN);
 	}
 
-	if (fbool("--setup","-p")) {
+	if (fbool("setup")) {
 		std::cout << "Info: Setting up needed index. The NV space password is 'default password'." << std::endl;
 
 		TPM2B_NV_PUBLIC pub;
@@ -372,8 +340,8 @@ int main(int argc, char **argv)
 		nvmem_define(0x80000A, &pub);
 	}
 
-	if (fbool("--cleanup","-C")) {
-		std::cout << "Info: Cleaning up NV space 0x80000A." << std::endl;
+	if (fbool("cleanup")) {
+		std::cout << "Info: Cleaning up RMASmoke's NV space." << std::endl;
 		nvmem_undefine(0x80000A);
 	}
 
