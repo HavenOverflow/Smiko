@@ -1,9 +1,12 @@
+>[!IMPORTANT]
+>Building with musl-based distros has not been tested and may not work!
+
 # Building
 In order to build the software inside this repository, first make sure you have all the required dependencies installed.
 
 For Debian Linux and derivatives:
 ```bash
-sudo apt-get install git make gcc g++ protobuf-compiler libtss2-dev libusb-1.0-0-dev libftdi-dev libelf-dev libxml2-dev rapidjson-dev pkg-config gcc-arm-none-eabi gcc-aarch64-linux-gnu libftdi1-dev python3
+sudo apt-get install git make gcc g++ protobuf-compiler libtss2-dev libusb-1.0-0-dev libftdi-dev libelf-dev libxml2-dev rapidjson-dev pkg-config gcc-arm-none-eabi libftdi1-dev python3
 pip install -r pip-requirements.txt --break-system-packages
 ```
 
@@ -26,3 +29,8 @@ pip install -r pip-requirements.txt --break-system-packages
 ```
 
 Then run `make` in the root of the repository. You can specify the architecture with `ARCH=x86_64` or `ARCH=aarch64`. Output binaries can be found in `build/$ARCH`, and built firmware images in `build/firmware`. Note that MacOS and BSD derivatives are not (officially) supported.
+
+## Cross-Compiling
+If you want to cross compile for Smiko, you must download your target architecture's toolchain. 
+
+For example: `sudo apt install gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu` is for cross-compiling to aarch64 on Debian Linux (and debian-based distros)

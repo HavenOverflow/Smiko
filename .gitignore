@@ -12,4 +12,4 @@ test/tock-on-titan
 /*.iso
 /*.zip
 
-.requirements_met
+.*requirements_met

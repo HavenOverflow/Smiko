@@ -1,5 +1,4 @@
-REPO_ROOT ?= ../..
-
+# repo_root is passed from main Makefile
 include $(REPO_ROOT)/toolchain.mk
 include $(REPO_ROOT)/sources.mk
 

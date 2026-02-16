@@ -4,6 +4,8 @@
 
 include toolchain.mk
 
+MAKE_ARGS += REPO_ROOT=$(abspath .)
+
 # Build variables
 BDIR ?= build
 # TODO (Hannah): Add NOSClient in release wave 2.
@@ -15,6 +17,12 @@ CLEAN_DIRS := $(BDIR) src/smiko/build src/shaft/build \
 	src/ti50/common/build src/ti50/third_party/tock/tock/target src/nugget-os/build \
 	test/signer/build test/tpm2-simulator/build
 
+SUBMODULE_DIRS := \
+	src/cr50 \
+	src/tpm2 \
+	third_party/nanopb
+
+# SUBMODULE_DIRS += src/ti50 src/nugget-os test/gscemulator
 
 # Use VERBOSE=1 for debug output
 ifeq ($(VERBOSE),)
@@ -27,19 +35,23 @@ endif
 
 # Shorthands
 all: utils firmware
+all-tests: all tests
 utils: check-deps $(PROGS)
 firmware: check-deps $(FIRMWARE)
 tests: check-deps $(TESTS)
 
 .PHONY: check-deps
 check-deps:
-	@if [ ! -d src/cr50 ] || [ -z "$$(find src/cr50 -mindepth 1 -print -quit 2>/dev/null)" ]; then \
-		echo "Getting submodules" >&2; \
-		git submodule init; \
-		git submodule update; \
-	fi
+	@for dir in $(SUBMODULE_DIRS); do \
+		if [ ! -d $$dir ] || [ -z "$$(find $$dir -mindepth 1 -print -quit 2>/dev/null)" ]; then \
+			echo "Getting submodules" >&2; \
+			git submodule init; \
+			git submodule update; \
+			break; \
+		fi \
+	done
 
-	$(Q)$(SHELL) ./requirements.sh
+	$(Q)$(SHELL) ./requirements.sh $(ARCH)
 
 .PHONY: clean
 clean:
@@ -101,50 +113,45 @@ help:
 
 
 # Build directories
-$(BDIR):
+$(BDIR)-$(ARCH):
 	$(Q)$(MKDIR) -p $(BDIR)/bin/$(ARCH) $(BDIR)/lib/$(ARCH) \
 		$(BDIR)/firmware $(BDIR)/gsctool/$(ARCH)
 
 
 # Utilities
-smiko: $(BDIR) $(BDIR)/bin/$(ARCH)/smiko
+smiko: check-deps $(BDIR)-$(ARCH) $(BDIR)/bin/$(ARCH)/smiko
 $(BDIR)/bin/$(ARCH)/smiko:
-	$(Q)$(MAKE) -C src/smiko --no-print-directory
+	$(Q)$(MAKE) $(MAKE_ARGS) -C src/smiko --no-print-directory
 	$(Q)$(CP) src/smiko/build/$(ARCH)/smiko $@
 
-shaft: $(BDIR) $(BDIR)/bin/$(ARCH)/shaft
+shaft: check-deps $(BDIR)-$(ARCH) $(BDIR)/bin/$(ARCH)/shaft
 $(BDIR)/bin/$(ARCH)/shaft:
-	$(Q)$(MAKE) -C src/shaft --no-print-directory
+	$(Q)$(MAKE) $(MAKE_ARGS) -C src/shaft --no-print-directory
 	$(Q)$(CP) src/shaft/build/$(ARCH)/shaft $@
 
-carver: $(BDIR) $(BDIR)/bin/$(ARCH)/carver
+carver: check-deps $(BDIR)-$(ARCH) $(BDIR)/bin/$(ARCH)/carver
 $(BDIR)/bin/$(ARCH)/carver:
-	$(Q)$(MAKE) -C src/carver --no-print-directory
+	$(Q)$(MAKE) $(MAKE_ARGS) -C src/carver --no-print-directory
 	$(Q)$(CP) src/carver/build/$(ARCH)/carver $@
 
-gsctool: $(BDIR) $(BDIR)/bin/$(ARCH)/gsctool
+gsctool: check-deps $(BDIR)-$(ARCH) $(BDIR)/bin/$(ARCH)/gsctool
 $(BDIR)/bin/$(ARCH)/gsctool:
-	$(Q)$(MAKE) -C src/cr50/extra/usb_updater --no-print-directory
+	$(Q)$(MAKE) $(MAKE_ARGS) -C src/cr50/extra/usb_updater --no-print-directory
 
-rmasmoke: $(BDIR) $(BDIR)/bin/$(ARCH)/rmasmoke
+rmasmoke: check-deps $(BDIR)-$(ARCH) $(BDIR)/bin/$(ARCH)/rmasmoke
 $(BDIR)/bin/$(ARCH)/rmasmoke:
-	$(Q)$(MAKE) -C src/rmasmoke --no-print-directory
+	$(Q)$(MAKE) $(MAKE_ARGS) -C src/rmasmoke --no-print-directory
 	$(Q)$(CP) src/rmasmoke/build/$(ARCH)/rmasmoke $@
 
-nosclient: $(BDIR) $(BDIR)/bin/$(ARCH)/nosclient
-$(BDIR)/bin/$(ARCH)/nosclient:
-	$(Q)$(MAKE) -C src/nosclient --no-print-directory
-	$(Q)$(CP) src/nosclient/build/$(ARCH)/nosclient $@
-
-codesigner: $(BDIR)/bin/$(ARCH)/cr50-codesigner
+codesigner: check-deps $(BDIR)-$(ARCH) $(BDIR)/bin/$(ARCH)/cr50-codesigner
 $(BDIR)/bin/$(ARCH)/cr50-codesigner:
-	$(Q)$(MAKE) -C test/signer --no-print-directory
+	$(Q)$(MAKE) $(MAKE_ARGS) -C test/signer --no-print-directory
 	$(Q)$(CP) test/signer/build/$(ARCH)/cr50-codesigner $@
 
 
 
 # Firmware
-smiko-cfw: $(BDIR) $(BDIR)/firmware/smiko-bootcon-cfw.bin \
+smiko-cfw: check-deps $(BDIR)-$(ARCH) $(BDIR)/firmware/smiko-bootcon-cfw.bin \
 	$(BDIR)/firmware/smiko-update-cfw.bin
 
 src/cr50/build/smiko/RW/ec.RW.flat:
@@ -175,6 +182,6 @@ $(BDIR)/firmware/cr50.bin: $(BDIR)/bin/$(ARCH)/cr50-codesigner
 # Tests
 tpm2-simulator: $(BDIR) $(BDIR)/bin/$(ARCH)/tpm2-simulator
 $(BDIR)/bin/$(ARCH)/tpm2-simulator:
-	$(Q)$(MAKE) -C test/tpm2-simulator --no-print-directory
+	$(Q)$(MAKE) $(MAKE_ARGS) -C test/tpm2-simulator --no-print-directory
 	$(Q)$(CP) src/tpm2/build/$(ARCH)/libtpm2.a $(BDIR)/lib/$(ARCH)/libtpm2.a
 	
