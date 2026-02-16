@@ -17,6 +17,12 @@ CLEAN_DIRS := $(BDIR) src/smiko/build src/shaft/build \
 	src/ti50/common/build src/ti50/third_party/tock/tock/target src/nugget-os/build \
 	test/signer/build test/tpm2-simulator/build
 
+SUBMODULE_DIRS := \
+	src/cr50 \
+	src/tpm2 \
+	third_party/nanopb
+
+# SUBMODULE_DIRS += src/ti50 src/nugget-os test/gscemulator
 
 # Use VERBOSE=1 for debug output
 ifeq ($(VERBOSE),)
@@ -36,11 +42,14 @@ tests: check-deps $(TESTS)
 
 .PHONY: check-deps
 check-deps:
-	@if [ ! -d src/cr50 ] || [ -z "$$(find src/cr50 -mindepth 1 -print -quit 2>/dev/null)" ]; then \
-		echo "Getting submodules" >&2; \
-		git submodule init; \
-		git submodule update; \
-	fi
+	@for dir in $(SUBMODULE_DIRS); do \
+		if [ ! -d $$dir ] || [ -z "$$(find $$dir -mindepth 1 -print -quit 2>/dev/null)" ]; then \
+			echo "Getting submodules" >&2; \
+			git submodule init; \
+			git submodule update; \
+			break; \
+		fi \
+	done
 
 	$(Q)$(SHELL) ./requirements.sh $(ARCH)
 
