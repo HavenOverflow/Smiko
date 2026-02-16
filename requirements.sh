@@ -47,9 +47,11 @@ else
   cmds+=(gcc g++)
 fi
 
+# I'm not sure if libftdi-dev AND libftdi1-dev are both needed, but it works fine with both so whatever
 pkgs=(
   libtss2-dev
   libusb-1.0-0-dev
+  libftdi1-dev
   libftdi-dev
   libelf-dev
   libxml2-dev
