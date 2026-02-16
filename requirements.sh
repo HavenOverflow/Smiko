@@ -1,36 +1,51 @@
 #!/usr/bin/env bash
+TARGET_ARCH="${1}"
+HOST_ARCH="$(uname -m)"
 
 . /etc/os-release
 case "$ID" in
-  debian|ubuntu|linuxmint|pop) #debian distros off top of head
-    echo ""
+  debian|ubuntu|linuxmint|pop)
     ;;
   *)
-    exit 0 #cant test other distros and also lazy
+    exit 0
     ;;
 esac
 
-if [ -e .requirements_met ]; then
+if [ -e .${TARGET_ARCH}_requirements_met ]; then
     exit 0
 fi
 
-set -euo pipefail
-
 missing=0
 
-echo "Checking dependencies..."
+echo "Checking dependencies for arch: $TARGET_ARCH"
 
 cmds=(
   git
   make
-  gcc
-  g++
-  pkg-config
   protoc
-  python3
   arm-none-eabi-gcc
-  aarch64-linux-gnu-gcc
+  python3
 )
+
+if [ "$TARGET_ARCH" != "$HOST_ARCH" ]; then
+  case "$ARCH" in
+    aarch64)
+      cmds+=(aarch64-linux-gnu-gcc aarch64-linux-gnu-g++)
+      ;;
+    x86_64)
+      cmds+=(x86_64-linux-gnu-gcc x86_64-linux-gnu-g++)
+      ;;
+    armv7l)
+      cmds+=(arm-none-eabi-gcc arm-none-eabi-g++)
+      ;;
+    *)
+      echo "unsupported target arch: $TARGET_ARCH"
+      exit 1
+      ;;
+  esac
+else 
+  cmds+=(gcc g++)
+fi
 
 pkgs=(
   libtss2-dev
@@ -42,9 +57,9 @@ pkgs=(
 )
 
 py_pkgs=(
-    protobuf
-    grpcio-tools
-  )
+  protobuf
+  grpcio-tools
+)
 
 for c in "${cmds[@]}"; do
   if ! command -v "$c" >/dev/null 2>&1; then
@@ -72,10 +87,9 @@ else
   done
 fi
 
-echo
 if [ "$missing" -ne 0 ]; then
   echo "Check docs/building.md to install required packages."
   exit 1
 else
-  touch .requirements_met #because requirement scan is slow
+  touch .${TARGET_ARCH}_requirements_met #because requirement scan is slow
 fi

@@ -10,12 +10,15 @@ RBDIR ?= build/rust/release
 ifeq ($(CROSS_COMPILE),)
 ifeq ($(ARCH),x86_64)
 CROSS_COMPILE := x86_64-linux-gnu-
+HEADER_DIR := $(abspath lib/x86_64/headers)
 endif
 ifeq ($(ARCH),aarch64)
 CROSS_COMPILE := aarch64-linux-gnu-
+HEADER_DIR := $(abspath lib/aarch64/headers)
 endif
 ifeq ($(ARCH),armv7l)
 CROSS_COMPILE := arm-none-eabi-
+HEADER_DIR := $(abspath lib/armv7l/headers)
 endif
 endif # ifeq CROSS_COMPILE,
 
@@ -42,3 +45,16 @@ MKDIR ?= mkdir
 TOUCH ?= touch
 UNZIP ?= unzip
 ZIP ?= zip
+
+# maybe not all of these are needed, but it's easier to pass them all
+MAKE_ARGS := \
+    ARCH=$(ARCH) \
+    CROSS_COMPILE=$(CROSS_COMPILE) \
+    VERBOSE=$(VERBOSE) \
+    STATIC=$(STATIC) \
+    CC=$(CC) \
+    CXX=$(CXX) \
+    LD=$(LD) \
+    PROTOC=$(PROTOC) \
+    PKG_CONFIG=$(PKG_CONFIG) \
+    HEADER_DIR=$(HEADER_DIR)
