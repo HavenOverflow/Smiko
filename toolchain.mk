@@ -8,18 +8,24 @@ LIBDIR ?= build/lib
 RBDIR ?= build/rust/release
 
 ifeq ($(CROSS_COMPILE),)
+ifneq ($(ARCH),$(shell uname -m))
+
 ifeq ($(ARCH),x86_64)
 CROSS_COMPILE := x86_64-linux-gnu-
 HEADER_DIR := $(abspath lib/x86_64/headers)
-endif
+endif # ifeq ARCH,x86_64
+
 ifeq ($(ARCH),aarch64)
 CROSS_COMPILE := aarch64-linux-gnu-
 HEADER_DIR := $(abspath lib/aarch64/headers)
-endif
+endif # ifeq ARCH,aarch64
+
 ifeq ($(ARCH),armv7l)
 CROSS_COMPILE := arm-none-eabi-
 HEADER_DIR := $(abspath lib/armv7l/headers)
-endif
+endif# ifeq ARCH,armv7l
+
+else # ifneq ARCH,uname -m
 endif # ifeq CROSS_COMPILE,
 
 ### Standard build utilities ###
