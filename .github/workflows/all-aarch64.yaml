@@ -1,0 +1,21 @@
+name: Build Everything & upload (aarch64)
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: add deps
+      run: sudo apt update && sudo apt upgrade -y && sudo apt-get install gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu g++-aarch64-linux-gnu git make gcc g++ protobuf-compiler libtss2-dev libusb-1.0-0-dev libftdi-dev libelf-dev libxml2-dev rapidjson-dev pkg-config gcc-arm-none-eabi libftdi1-dev python3 python3-pip && pip install -r pip-requirements.txt --break-system-packages
+      # We don't worry about cloning submodules since the builder will do it for us.
+    - name: Build All (aarch64)
+      run: STATIC=1 VERBOSE=1 ARCH=aarch64 make all-tests
+    - name: Upload build files
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-aarch64
+        path: build
