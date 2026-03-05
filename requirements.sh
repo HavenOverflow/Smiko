@@ -2,6 +2,11 @@
 TARGET_ARCH="${1}"
 HOST_ARCH="$(uname -m)"
 
+if [ $BYPASS_REQ_CHECKS -eq 1 ]; then
+  echo "skipping requirement checks!"
+  exit 0
+fi
+
 # /etc/os-release does not exist on macOS, so
 # if /etc/os-release doesn't exist, just ignore then.
 if [ ! -f /etc/os-release ]; then
