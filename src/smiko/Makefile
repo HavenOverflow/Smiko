@@ -6,11 +6,24 @@ BDIR ?= build/$(ARCH)
 
 # These are the flags used to compile normal binaries throughout src/*.c
 CPPFLAGS += -Iinclude -D_FILE_OFFSET_BITS=64 \
-	-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
+	-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE \
+	$(LIBUSB_CFLAGS) $(LIBCRYPTO_CFLAGS)
 
 CFLAGS += -Wall -std=gnu99 -g -Wno-deprecated-declarations -Wno-parentheses \
 	-Wno-stringop-overflow -Wno-pointer-sign -Wno-incompatible-pointer-types \
 	-Wno-unused-const-variable -I$(REPO_ROOT)/include -I$(BDIR) -Wno-unused-value
+
+# macOS specific configs
+ifeq ($(UNAME_S),Darwin)
+CPPFLAGS += -I$(BREW_PREFIX)/include
+CFLAGS   += -Wno-format
+
+# libusb manual lib link
+LDFLAGS  += -L$(BREW_PREFIX)/lib -L$(BREW_PREFIX)/opt/libusb/lib 
+
+# openssl manual lib link
+LDFLAGS  +=-L$(BREW_PREFIX)/opt/openssl/lib
+endif
 
 CXXFLAGS += -Wall -g -Wno-deprecated-declarations -Wno-parentheses \
 	-Wno-stringop-overflow -I$(REPO_ROOT)/include -I$(BDIR) -Wno-unused-value

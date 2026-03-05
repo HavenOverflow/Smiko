@@ -2,6 +2,7 @@
 # "aarch64" and "arm-none-eabi-" for arm64, if you're building FOR x86, then "x86_64" and "x86_64-linux-gnu-"
 ARCH ?= $(shell uname -m)
 CROSS_COMPILE ?= 
+UNAME_S := $(shell uname -s)
 GENDIR ?= build/gen
 BINDIR ?= build/bin/$(ARCH)
 LIBDIR ?= build/lib
@@ -39,12 +40,34 @@ endif
 MAKE ?= make
 SHELL := /bin/bash
 PYTHON ?= python3
-CC := $(CROSS_COMPILE)gcc
-CXX := $(CROSS_COMPILE)g++
-LD := $(CROSS_COMPILE)gcc
 PROTOC ?= protoc
 PKG_CONFIG ?= pkg-config
 INSTALL ?= install
+
+# -- macOS specific --
+# if we have homebrew gcc, use it instead of apple clang.
+# openssl and libusb aren't linked by default by homebrew too.
+# expose keg pkg-config paths.
+ifeq ($(UNAME_S),Darwin)
+BREW_PREFIX    := $(shell brew --prefix 2>/dev/null || echo /opt/homebrew)
+export PKG_CONFIG_PATH := $(BREW_PREFIX)/opt/openssl/lib/pkgconfig:$(PKG_CONFIG_PATH)
+export PKG_CONFIG_PATH := $(BREW_PREFIX)/opt/libusb/lib/pkgconfig:$(PKG_CONFIG_PATH)
+export PKG_CONFIG_PATH := $(BREW_PREFIX)/lib/pkgconfig:$(PKG_CONFIG_PATH)
+_BREW_GCC      := $(shell ls $(BREW_PREFIX)/bin/gcc-[0-9]* 2>/dev/null | sort -V | tail -1)
+ifneq ($(_BREW_GCC),)
+CC  := $(_BREW_GCC)
+CXX := $(subst gcc,g++,$(_BREW_GCC))
+LD  := $(_BREW_GCC)
+else
+CC  := $(CROSS_COMPILE)gcc
+CXX := $(CROSS_COMPILE)g++
+LD  := $(CROSS_COMPILE)gcc
+endif # _BREW_GCC
+else
+CC := $(CROSS_COMPILE)gcc
+CXX := $(CROSS_COMPILE)g++
+LD := $(CROSS_COMPILE)gcc
+endif # Darwin
 
 ### Chromium extension build utilities ###
 CHROMIUM ?= $(firstword $(wildcard /usr/bin/google-chrome-stable \

@@ -97,11 +97,15 @@ LIBLZMA += $(LIBLZMA_CFLAGS)
 
 LIBS_CFLAGS = $(LIBUSB_CFLAGS) $(LIBFTDI_CFLAGS) $(LIBCRYPTO_CFLAGS) $(LIBPROTOBUF_CFLAGS) $(LIBTSS2_CFLAGS) $(LIBELF_CFLAGS) $(LIBXML2_CFLAGS) $(LIBZ_CFLAGS) $(LIBLZMA_CFLAGS)
 
-# Static compilation handler
+# static compile isn't supported on macOS
 ifneq ($(STATIC),)
+ifneq ($(UNAME_S),Darwin)
 CFLAGS += -static
 CXXFLAGS += -static
 LDFLAGS += -static
+else
+$(warning STATIC=1 is not supported on macOS, ignoring flag...)
+endif
 endif
 
 ifdef HEADER_DIR

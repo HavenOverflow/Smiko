@@ -2,6 +2,11 @@
 TARGET_ARCH="${1}"
 HOST_ARCH="$(uname -m)"
 
+# /etc/os-release does not exist on macOS, so
+# if /etc/os-release doesn't exist, just ignore then.
+if [ ! -f /etc/os-release ]; then
+    exit 0
+fi
 . /etc/os-release
 case "$ID" in
   debian|ubuntu|linuxmint|pop)

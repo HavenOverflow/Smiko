@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 out="$1"
 user=$(whoami)
-hostname=$(cat /etc/hostname)
+hostname=$(cat /etc/hostname 2>/dev/null || hostname)
 date=$(date)
 
 cat <<EOF >"$out"
