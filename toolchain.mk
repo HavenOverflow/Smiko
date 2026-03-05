@@ -81,6 +81,7 @@ MKDIR ?= mkdir
 TOUCH ?= touch
 UNZIP ?= unzip
 ZIP ?= zip
+DATADIR ?= /usr/local/share
 
 # maybe not all of these are needed, but it's easier to pass them all
 MAKE_ARGS := \
@@ -93,4 +94,5 @@ MAKE_ARGS := \
     LD=$(LD) \
     PROTOC=$(PROTOC) \
     PKG_CONFIG=$(PKG_CONFIG) \
-    HEADER_DIR=$(HEADER_DIR)
+    HEADER_DIR=$(HEADER_DIR) \
+    DATADIR=$(DATADIR)

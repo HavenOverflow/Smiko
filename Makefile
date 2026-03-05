@@ -68,10 +68,15 @@ install:
 		$(INSTALL:@%=install) -m -x build/lib/$(ARCH)/* /usr/local/lib/; \
 	fi
 
-	$(Q)$(INSTALL) -d /usr/share/smiko/firmware
-	$(Q)$(INSTALL) -m -x build/firmware/* /usr/share/smiko/firmware
-	$(Q)$(INSTALL) -d /usr/share/smiko/include
-	$(Q)$(INSTALL) -m -x build/gen/include/* /usr/share/smiko/include
+	@if ls build/firmware/* >/dev/null 2>&1; then \
+		$(INSTALL:@%=install) -d $(DATADIR)/smiko/firmware; \
+		$(INSTALL:@%=install) -m -x build/firmware/* $(DATADIR)/smiko/firmware; \
+	fi
+
+	@if ls build/gen/include/* >/dev/null 2>&1; then \
+		$(INSTALL:@%=install) -d $(DATADIR)/smiko/include; \
+		$(INSTALL:@%=install) -m -x build/gen/include/* $(DATADIR)/smiko/include; \
+	fi
 
 .PHONY: help
 help:
