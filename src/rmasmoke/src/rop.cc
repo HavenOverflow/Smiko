@@ -89,14 +89,27 @@ static uint8_t *get_dataleak_chain(std::string ver, uint32_t adr, uint32_t len, 
 
 int execute_rop_chain(enum rop_chain_type rop_type)
 {
-	std::string ver = fval("version", 1);
+	const char *ver_arg = fval("version", 1);
+	if (!ver_arg) {
+		std::cerr << "Error: --version is required for this operation." << std::endl;
+		return -1;
+	}
+
+	std::string ver = ver_arg;
 	uint8_t* ropbuf = NULL;
 	size_t ropbuf_size;
 
 	if (rop_type == rop_chain_type::DATALEAK_CHAIN) {
+		const char *dump_addr_arg = fval("dump_addr", 1);
+		const char *dump_len_arg = fval("dump_addr", 2);
+		if (!dump_addr_arg || !dump_len_arg) {
+			std::cerr << "Error: --dump_addr expects <addr> <length>." << std::endl;
+			return -1;
+		}
+
 		uint32_t dump_addr, dump_len;
-		dump_addr = strtoul(fval("dump_addr", 1), nullptr, 0);
-		dump_len = strtoul(fval("dump_addr", 2), nullptr, 0);
+		dump_addr = strtoul(dump_addr_arg, nullptr, 0);
+		dump_len = strtoul(dump_len_arg, nullptr, 0);
 
 		printf("Dumping 0x%x - 0x%x to the console.\n", dump_addr, dump_len);
 

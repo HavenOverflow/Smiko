@@ -83,7 +83,10 @@ int fbool(char *arg)
 char *fval(char *arg, int sel)
 {
 	int offset = fbool(arg);
-	if (!offset || (gargc - offset) < 2)
+	if (!offset)
+		return NULL;
+
+	if (offset + sel >= gargc)
 		return NULL;
 
 	if (gargv[offset + 1][0] == '-') {
