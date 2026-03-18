@@ -292,7 +292,9 @@ int main(int argc, char **argv)
 	if (argc < 2) {
 		std::cerr << "Error: Expected more arguments." << std::endl;
 		show_info(1);
+		return 1;
 	}
+
 	if (fbool("help")) show_info(0);
 
 	if (getuid() != 0) {
@@ -310,21 +312,21 @@ int main(int argc, char **argv)
 	if (fbool("startup")) {
 		std::cout << "Info: Sending startup command to TPM." << std::endl;
 		tpm_startup();
-	}
 
-	if (fbool("take_ownership")) {
+	} else if (fbool("take_ownership")) {
 		std::cout << "Info: Taking TPM ownership." << std::endl;
 		if (tpm_take_ownership() != 0) {
 			std::cerr << "Erorr: Failed to take TPM ownership." << std::endl;
 			return 1;
 		}
-	}
 
-	if (fbool("dump_addr")) {
+	} else if (fbool("dump_addr")) {
 		execute_rop_chain(rop_chain_type::DATALEAK_CHAIN);
-	}
 
-	if (fbool("setup")) {
+	} else if (fbool("custom_chain")) {
+		execute_rop_chain(rop_chain_type::CUSTOM_CHAIN);
+
+	} else if (fbool("setup")) {
 		std::cout << "Info: Setting up needed index. The NV space password is 'default password'." << std::endl;
 
 		TPM2B_NV_PUBLIC pub;
@@ -338,9 +340,8 @@ int main(int argc, char **argv)
 		pub.size = sizeof(TPM2B_NV_PUBLIC);
 
 		nvmem_define(0x80000A, &pub);
-	}
-
-	if (fbool("cleanup")) {
+		
+	} else if (fbool("cleanup")) {
 		std::cout << "Info: Cleaning up RMASmoke's NV space." << std::endl;
 		nvmem_undefine(0x80000A);
 	}

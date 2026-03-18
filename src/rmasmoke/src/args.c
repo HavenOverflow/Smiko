@@ -43,7 +43,6 @@ const struct cmd_line_args args[] = {
 	{'S', "setup", NULL, "Setup the necessary index for RMASmoke to operate", ARG_BOOLEAN},
 	{'c', "cleanup", NULL, "Clean up indexes created by RMASmoke", ARG_BOOLEAN},
 	{'o', "take_ownership", NULL, "Take ownership of TPM2 and generate local_tpm_data", ARG_BOOLEAN},
-	{'g', "dglobalsec", NULL, "Disarm GLOBALSEC and jump to RW_B", ARG_BOOLEAN},
 	{'a', "dump_addr", " <addr> <length>", "Specify an address to dump to the CCD console", ARG_STRING},
 };
 

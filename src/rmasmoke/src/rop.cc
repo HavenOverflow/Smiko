@@ -30,6 +30,7 @@
 #include "rop-0-5-120.h"
 #include "rop-0-5-153.h"
 #include "rop-0-5-201.h"
+#include "rop-custom.h"
 
 using namespace std;
 
@@ -91,8 +92,10 @@ int execute_rop_chain(enum rop_chain_type rop_type)
 {
 	const char *ver_arg = fval("version", 1);
 	if (!ver_arg) {
-		std::cerr << "Error: --version is required for this operation." << std::endl;
-		return -1;
+		if (rop_type == rop_chain_type::DATALEAK_CHAIN) {
+			std::cerr << "Error: --version is required for this operation." << std::endl;
+			return -1;
+		}
 	}
 
 	std::string ver = ver_arg;
@@ -111,9 +114,18 @@ int execute_rop_chain(enum rop_chain_type rop_type)
 		dump_addr = strtoul(dump_addr_arg, nullptr, 0);
 		dump_len = strtoul(dump_len_arg, nullptr, 0);
 
-		printf("Dumping 0x%x - 0x%x to the console.\n", dump_addr, dump_len);
+		printf("Dumping 0x%x - 0x%x over the USB/UART console.\n", dump_addr, dump_addr + dump_len);
 
 		ropbuf = get_dataleak_chain(ver, dump_addr, dump_len, ropbuf_size);
+
+	} else if (rop_type == rop_chain_type::CUSTOM_CHAIN) {
+		uint8_t ropbuf_arr[1024 + sizeof(init_ropchain_custom)];
+
+		memcpy(ropbuf_arr, main_ropchain_custom, sizeof(main_ropchain_custom));
+		memcpy(&ropbuf_arr[1024], init_ropchain_custom, sizeof(init_ropchain_custom));
+		
+		ropbuf_size = 1024 + sizeof(init_ropchain_custom);
+		ropbuf = ropbuf_arr;
 	};
 	
 	if (!ropbuf) {
