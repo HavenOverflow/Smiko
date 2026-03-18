@@ -95,6 +95,8 @@ int execute_rop_chain(enum rop_chain_type rop_type)
 		if (rop_type == rop_chain_type::DATALEAK_CHAIN) {
 			std::cerr << "Error: --version is required for this operation." << std::endl;
 			return -1;
+		} else {
+			ver_arg = "0.0.0";
 		}
 	}
 
