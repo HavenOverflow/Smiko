@@ -71,4 +71,4 @@ Core Contributors
 
 ## Discord
 - [Join HavenOverflow](https://discord.gg/BtJ6j2eJrU)
-- [Join Crosbreaker](https://discord.crosbreaker.dev)
+- [Join Crosbreaker](https://discord.com/invite/crosbreaker-1375357349425971231)
