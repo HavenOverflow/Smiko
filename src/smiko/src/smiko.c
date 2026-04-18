@@ -58,7 +58,7 @@ int open_socket(void)
 		
 		/* We found our socket, we're done. */
 		if (dev > -1) {
-			xfer_type = i; // Keep alinged with transfer_type enum in smiko.h! ~ Hannah
+			xfer_type = i; // Keep aligned with transfer_type enum in smiko.h! ~ Hannah
 			return dev;
 		}
 	}
