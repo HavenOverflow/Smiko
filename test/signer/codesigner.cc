@@ -358,6 +358,7 @@ int getOptions(int argc, char *argv[])
 				break;
 			case 'K':
 				FLAGS_override_keyid = true;
+				break;
 			case 'i':
 				inputFilename.assign(optarg);
 				break;
